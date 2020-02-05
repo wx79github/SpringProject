@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <!--配置bean class:bean的全类名通过，通过反射的方式在IOC容器中创建Bean,所以需要无参构造器
+                 id:标识容器中的id唯一-->
+    <!--通过setter方法注入-->
+    <bean id ="helloWorld" class="com.spring.beans.HelloWorld">
+        <property name="name2" value="Spring"></property>
+    </bean>
+    <!--2 构造方法注入-->
+    <!--2-1 构造方法注入.指定参数的类型和位置，  value 值，index 位置区分-->
+    <bean id ="car" class="com.spring.beans.Car">
+        <constructor-arg value="Audi" index="0" ></constructor-arg>
+        <constructor-arg value="ShangHai" index="1" ></constructor-arg>
+        <constructor-arg value="20000" index="2" ></constructor-arg>
+    </bean>
+    <!--2-2 构造方法注入.指定参数的，  value 值，type 类型-->
+    <bean id ="car2" class="com.spring.beans.Car">
+        <constructor-arg value="Audi" index="0" ></constructor-arg>
+        <!--如果字面值包含特殊字符可以使用 <![CDATA[]] 包裹起来-->
+        <!--属性值可以使用value 子节点配置-->
+        <constructor-arg type="java.lang.String" >
+           <value><![CDATA[<ShangHai^>]]></value>
+        </constructor-arg>
+        <!--<constructor-arg value="200" type="int" ></constructor-arg>--><!--可以使用-->
+        <constructor-arg type="int">
+            <value>250</value>
+        </constructor-arg>
+    </bean>
+    <!--Person1 -->
+    <bean id="person" class="com.spring.beans.Person">
+        <property name="name" value="Tom"></property>
+        <property name="age" value="20"></property>
+        <!--引用其他Bean通过<ref>元素或者ref属性为Bean的属性或者构造器参数指定Bean的引用-->
+        <!-- 1.ref属性引用Bean-->
+        <!--<property name="car" ref="car2"></property>-->
+        <!-- 2.ref元素引用Bean-->
+<!--        <property name="car">-->
+<!--            <ref bean="car2"></ref>-->
+<!--        </property>-->
+        <!-- 3.在属性或者构造器里包含Bean的声明,内部Bean-->
+        <property name ="car">
+            <bean id ="car3" class="com.spring.beans.Car">
+                <constructor-arg value="Audi" index="0" ></constructor-arg>
+                <constructor-arg value="ShangHai" index="1" ></constructor-arg>
+                <constructor-arg value="20000" index="2" ></constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    <!-- Person2 -->
+    <bean id="person2" class="com.spring.beans.Person">
+        <property name="name" value="Tom"></property>
+        <property name="age" value="20"></property>
+        <!--引用其他Bean通过<ref>元素或者ref属性为Bean的属性或者构造器参数指定Bean的引用-->
+        <!-- 1.ref属性引用Bean-->
+        <!--<property name="car" ref="car2"></property>-->
+        <!-- 2.ref元素引用Bean-->
+        <!--        <property name="car">-->
+        <!--            <ref bean="car2"></ref>-->
+        <!--        </property>-->
+        <!-- 3.在属性或者构造器里包含Bean的声明,内部Bean-->
+        <property name ="car">
+            <bean id ="car3" class="com.spring.beans.Car">
+                <constructor-arg value="Audi" index="0" ></constructor-arg>
+                <constructor-arg value="ShangHai" index="1" ></constructor-arg>
+                <constructor-arg value="20000" index="2" ></constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    <!-- Person3（测试对象为null） -->
+    <bean id="person3" class="com.spring.beans.Person">
+        <constructor-arg value="Jetty"></constructor-arg>
+        <constructor-arg value="20"></constructor-arg>
+        <!--测试赋值null-->
+        <constructor-arg><null/></constructor-arg>
+    </bean>
+
+    <!-- Person 4(级联属性赋值)-需要初始化后才能赋值，否则会抛弃异常-->
+    <bean id="person4" class="com.spring.beans.Person">
+        <constructor-arg value="Jetty"></constructor-arg>
+        <constructor-arg value="20"></constructor-arg>
+        <constructor-arg  ref ="car2"></constructor-arg>
+        <property name ="car.brand" value="Audi"></property>
+        <property name ="car.corp" value="300"></property>
+    </bean>
+
+
+    <!--Persone5-->
+    <bean id="person5" class="com.spring.beans.collections.Person">
+<!--        <constructor-arg value="Jetty"></constructor-arg>-->
+<!--        <constructor-arg value="20"></constructor-arg>-->
+        <property name ="name" value="wx"></property>
+        <property name ="age" value="25"></property>
+        <property name="cars">
+            <list>
+                <ref bean="car"/>
+                <ref bean="car2"/>
+                <bean class ="com.spring.beans.Car">
+                    <constructor-arg value="Ford"></constructor-arg>
+                    <constructor-arg value="Changan"></constructor-arg>
+                    <constructor-arg value="200" type="int"></constructor-arg>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- NewPerson-->
+    <bean id="newPerson" class="com.spring.beans.collections.NewPerson">
+        <property name="name" value="Rose"/>
+        <property name="age"  value="28"/>
+        <property name="cars">
+            <map>
+                <!--使用map节点以及map的子节点entry来配置成员变量-->
+                <entry key="AA"  value-ref="car"></entry>
+                <entry key="BB"  value-ref="car2"></entry>
+            </map>
+        </property>
+    </bean>
+    <!--配置propert属性值-->
+    <bean id="dataSource" class="com.spring.beans.collections.DataSource">
+        <property name="properties">
+            <props>
+                <prop key="user">root</prop>
+                <prop key="password">1234</prop>
+                <prop key="jdbcUrl">jdbc:mysql://test</prop>
+                <prop key="driverClass">com.mysql.jdbc.Driver</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 配置单例的集合bean,以供应多个Bean进行引用，需要导入util命名空间-->
+    <util:list id="cars">
+        <ref bean="car"></ref>
+        <ref bean="car2"></ref>
+    </util:list>
+    <!--Persone6-->
+    <bean id="person6" class="com.spring.beans.collections.Person">
+        <property name ="name" value="wx"></property>
+        <property name ="age" value="25"></property>
+        <property name="cars" ref ="cars"></property>
+    </bean>
+    <!--通过p空间命名为bean的属性赋值，需要先导入p的空间-->
+    <bean id="person7" class="com.spring.beans.collections.Person" p:age="30" p:name="wx7" p:cars-ref="cars" >
+    </bean>
+    <!--spring自动装配bean-->
+    <bean>
+
+    </bean>
+</beans>
