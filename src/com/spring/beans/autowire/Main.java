@@ -16,10 +16,9 @@ public class Main {
 //        Person person = new Person();
 //        person =(Person) ctx.getBean("person");
 //        System.out.println(person);
-        //自动装配1
+        //自动装配
         Person person1 = new Person();
         person1 =(Person) ctx.getBean("person1");
-        System.out.println(person1);
-        System.out.println(person1.getCar());
+
     }
 }
